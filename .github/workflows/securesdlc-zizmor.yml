@@ -69,6 +69,7 @@ jobs:
 
       - name: Convert SARIF tool name
         run: |
+          exit 1
           jq '(.runs[].tool.driver.name) = "Zizmor (SecureSDLC)"' zizmor-severities-updated.sarif > zizmor-final.sarif
 
       - name: Upload Zizmor artifact
