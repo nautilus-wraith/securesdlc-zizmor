@@ -1,4 +1,4 @@
-name: GitHub Actions Security Analysis with zizmor 🌈
+name: SecureSDLC Zizmor
 run-name: "[SecureSDLC Zizmor] Ref:${{ github.ref_name }} Event:${{ github.event_name }}"
 
 on:
