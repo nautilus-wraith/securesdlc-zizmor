@@ -87,3 +87,13 @@ jobs:
           sarif_file: zizmor-final.sarif 
           category: zizmor
 
+      - name: Notify in Slack on failure
+        if: failure()
+        uses: nautilus-wraith/securesdlc-helpers/.github/actions/healthcheck@release-stable
+        with:
+          github_workflow: ${{ github.workflow }}
+          github_repository: ${{ github.repository }}
+          github_run_id: ${{ github.run_id }}
+          step_conclusion: ${{ steps.failing.conclusion }}
+          slack_webhook: ${{ secrets.SDLC_SLACK_NOTIFICATIONS }}          
+
