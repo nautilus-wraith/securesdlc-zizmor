@@ -129,7 +129,7 @@ jobs:
 
       - name: Notify in Slack on failure
         if: failure()
-        uses: nautilus-wraith/securesdlc-helpers/.github/actions/healthcheck@juraj
+        uses: nautilus-wraith/securesdlc-helpers/.github/actions/healthcheck@release-stable
         with:
           github_workflow: ${{ github.workflow }}
           github_repository: ${{ github.repository }}
