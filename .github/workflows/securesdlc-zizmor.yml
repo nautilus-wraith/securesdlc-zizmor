@@ -3,7 +3,10 @@ run-name: "[SecureSDLC Zizmor] Ref:${{ github.ref_name }} Event:${{ github.event
 
 on:
   workflow_dispatch: {}
-  workflow_call: {}
+  workflow_call:
+    secrets:
+      SDLC_SLACK_NOTIFICATIONS:
+        required: false  
   pull_request: {}
   # pull_request_target: {} # Gives workflows excessive permissions. Not wanted.
   push: # Used for local testing.
