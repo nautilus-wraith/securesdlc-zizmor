@@ -70,9 +70,6 @@ jobs:
         shell: bash
         run: exit 1
 
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@c7f87aa956e4c323abf06d5dec078e358f6b4d04 # v6.0.0
-
       - name: Detect workflow YAMLs
         id: detect_workflows
         shell: bash
@@ -84,6 +81,9 @@ jobs:
             echo "has_workflows=false" >> "$GITHUB_OUTPUT"
             echo "Workflow files NOT detected. Zizmor will fail."
           fi
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@c7f87aa956e4c323abf06d5dec078e358f6b4d04 # v6.0.0
 
       - name: Run Zizmor if workflow files exist
         run: uvx zizmor --format=sarif . > zizmor.sarif
@@ -143,7 +143,7 @@ jobs:
           category: zizmor
 
       - name: Notify in Slack on failure
-        if: ${{ failure() && steps.detect_workflows.outputs.has_workflows == 'true' }}
+        if: ${{ failure() && steps.detect_workflows.outputs.has_workflows != 'false' }} # notify if workflows exist (true) or job failed before detecting workflows (none)
         uses: nautilus-wraith/securesdlc-helpers/.github/actions/healthcheck@release-stable
         with:
           github_workflow: ${{ github.workflow }}
