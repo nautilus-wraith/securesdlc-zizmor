@@ -69,14 +69,18 @@ jobs:
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@c7f87aa956e4c323abf06d5dec078e358f6b4d04 # v6.0.0
 
-      - name: Run Zizmor if workflow files exist
+      - name: Detect workflow YAMLs
+        id: detect_workflows
+        shell: bash
         run: |
           if find .github -type f \( -name "*.yml" -o -name "*.yaml" \) | grep -q .; then
-            uvx zizmor --format=sarif . > zizmor.sarif 
+            echo "has_workflows=true"  >> "$GITHUB_OUTPUT"
           else
-            echo "No YAML workflow files found, exiting Zizmor. Expected that subsequent jobs fail." 
-            exit 1
-          fi        
+            echo "has_workflows=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run Zizmor if workflow files exist
+        run: uvx zizmor --format=sarif . > zizmor.sarif
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
       - name: Convert SARIF levels to severities
@@ -133,7 +137,7 @@ jobs:
           category: zizmor
 
       - name: Notify in Slack on failure
-        if: failure()
+        if: ${{ failure() && steps.detect_workflows.outputs.has_workflows == 'true' }}
         uses: nautilus-wraith/securesdlc-helpers/.github/actions/healthcheck@release-stable
         with:
           github_workflow: ${{ github.workflow }}
