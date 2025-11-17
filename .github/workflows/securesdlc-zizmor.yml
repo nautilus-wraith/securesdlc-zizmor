@@ -52,7 +52,7 @@ jobs:
         
   zizmor:
     name: SecureSDLC Zizmor
-    continue-on-error: true
+    continue-on-error: true # For private repos withou GHAS publishing fails. Also we do not want to block devs' pipelines in general.
     if: ${{ github.actor != 'dependabot[bot]' }}
     needs: securesdlc-visibility-check    
     runs-on: ubuntu-latest
@@ -66,11 +66,23 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Detect workflow YAMLs
+        id: detect_workflows
+        shell: bash
+        run: |
+          if find .github -type f \( -name "*.yml" -o -name "*.yaml" \) | grep -q .; then
+            echo "has_workflows=true"  >> "$GITHUB_OUTPUT"
+            echo "Workflow files detected. Ready to run Zizmor."
+          else
+            echo "has_workflows=false" >> "$GITHUB_OUTPUT"
+            echo "Workflow files NOT detected. Zizmor will fail."
+          fi
+
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@c7f87aa956e4c323abf06d5dec078e358f6b4d04 # v6.0.0
 
-      - name: Run zizmor
-        run: uvx zizmor --format=sarif . > zizmor.sarif 
+      - name: Run Zizmor if workflow files exist
+        run: uvx zizmor --format=sarif . > zizmor.sarif
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
       - name: Convert SARIF levels to severities
@@ -119,8 +131,7 @@ jobs:
           path: zizmor-final.sarif 
           retention-days: 5
 
-      # Fails gracefully for private repos when GitHub Advanced Security is not enabled. We avoid PR annotations on public repos for security.
-      - name: Publish findings to the dashboard and annotate PRs # allowed for non-public repos and public repos except for PRs
+      - name: Publish findings to the dashboard and annotate PRs # Allowed for non-public repos and public repos except for PRs- to supress findings in public PR annotations.
         if: ${{ needs.securesdlc-visibility-check.outputs.visibility != 'public' || (needs.securesdlc-visibility-check.outputs.visibility == 'public' && github.event_name != 'pull_request') }}
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -128,7 +139,7 @@ jobs:
           category: zizmor
 
       - name: Notify in Slack on failure
-        if: failure()
+        if: ${{ failure() && steps.detect_workflows.outputs.has_workflows != 'false' }} # Notify if workflows exist (true) or the job failed before detecting the workflows (none). False means there are no workflows and in that case we always suppress notifications.
         uses: nautilus-wraith/securesdlc-helpers/.github/actions/healthcheck@release-stable
         with:
           github_workflow: ${{ github.workflow }}
