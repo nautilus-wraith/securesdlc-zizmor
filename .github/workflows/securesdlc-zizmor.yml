@@ -53,7 +53,7 @@ jobs:
   zizmor:
     name: SecureSDLC Zizmor
     continue-on-error: true
-    if: ${{ github.actor != 'dependabot[bot]' && hashFiles('.github/workflows/**/*.y?(a)ml') != '' }}
+    if: ${{ (github.actor != 'dependabot[bot]') && (hashFiles('.github/workflows/**/*.y?(a)ml') != '') }}
     needs: securesdlc-visibility-check    
     runs-on: ubuntu-latest
     permissions:
