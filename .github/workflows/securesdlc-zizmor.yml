@@ -74,8 +74,8 @@ jobs:
           if find .github/workflows -type f \( -name "*.yml" -o -name "*.yaml" \) | grep -q .; then
             uvx zizmor --format=sarif . > zizmor.sarif 
           else
-            echo "No YAML workflow files found, exiting Zizmor." 
-            exit 0
+            echo "No YAML workflow files found, exiting Zizmor. Expected that subsequent jobs fail." 
+            exit 1
           fi        
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
