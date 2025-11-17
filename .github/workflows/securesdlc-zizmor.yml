@@ -66,10 +66,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Exit
-        shell: bash
-        run: exit 1
-
       - name: Detect workflow YAMLs
         id: detect_workflows
         shell: bash
@@ -81,6 +77,10 @@ jobs:
             echo "has_workflows=false" >> "$GITHUB_OUTPUT"
             echo "Workflow files NOT detected. Zizmor will fail."
           fi
+
+      - name: Exit
+        shell: bash
+        run: exit 1
 
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@c7f87aa956e4c323abf06d5dec078e358f6b4d04 # v6.0.0
