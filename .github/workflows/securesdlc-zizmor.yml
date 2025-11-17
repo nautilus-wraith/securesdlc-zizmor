@@ -71,7 +71,7 @@ jobs:
 
       - name: Run Zizmor if workflow files exist
         run: |
-          if find .github/workflows -type f \( -name "*.yml" -o -name "*.yaml" \) | grep -q .; then
+          if find .github -type f \( -name "*.yml" -o -name "*.yaml" \) | grep -q .; then
             uvx zizmor --format=sarif . > zizmor.sarif 
           else
             echo "No YAML workflow files found, exiting Zizmor. Expected that subsequent jobs fail." 
