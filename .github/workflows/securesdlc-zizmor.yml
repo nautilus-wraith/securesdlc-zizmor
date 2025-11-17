@@ -139,7 +139,7 @@ jobs:
           category: zizmor
 
       - name: Notify in Slack on failure
-        if: ${{ failure() && steps.detect_workflows.outputs.has_workflows != 'false' }} # notify if workflows exist (true) or job failed before detecting workflows (none)
+        if: ${{ failure() && steps.detect_workflows.outputs.has_workflows != 'false' }} # Notify if workflows exist (true) or the job failed before detecting the workflows (none). False means there are no workflows and in that case we always suppress notifications.
         uses: nautilus-wraith/securesdlc-helpers/.github/actions/healthcheck@release-stable
         with:
           github_workflow: ${{ github.workflow }}
