@@ -69,7 +69,7 @@ jobs:
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@c7f87aa956e4c323abf06d5dec078e358f6b4d04 # v6.0.0
 
-      - name: Run Zizmor if workflow files exist
+      - name: Run Zizmor
         run: uvx zizmor --format=sarif . > zizmor.sarif 
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
