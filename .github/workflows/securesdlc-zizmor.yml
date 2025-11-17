@@ -52,7 +52,7 @@ jobs:
         
   zizmor:
     name: SecureSDLC Zizmor
-    continue-on-error: true
+    continue-on-error: true # For private repos withou GHAS publishing fails. Also we do not want to block devs' pipelines in general.
     if: ${{ github.actor != 'dependabot[bot]' }}
     needs: securesdlc-visibility-check    
     runs-on: ubuntu-latest
@@ -74,13 +74,12 @@ jobs:
           if find .github/workflows -type f \( -name "*.yml" -o -name "*.yaml" \) | grep -q .; then
             uvx zizmor --format=sarif . > zizmor.sarif 
           else
-            echo "No YAML workflow files found, exiting Zizmor."
+            echo "No YAML workflow files found, exiting Zizmor." 
             exit 0
           fi        
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
       - name: Convert SARIF levels to severities
-        if: success()
         run: |
           jq '
           def level_score(level):
@@ -126,8 +125,7 @@ jobs:
           path: zizmor-final.sarif 
           retention-days: 5
 
-      # Fails gracefully for private repos when GitHub Advanced Security is not enabled. We avoid PR annotations on public repos for security.
-      - name: Publish findings to the dashboard and annotate PRs # allowed for non-public repos and public repos except for PRs
+      - name: Publish findings to the dashboard and annotate PRs # Allowed for non-public repos and public repos except for PRs- to supress findings in public PR annotations.
         if: ${{ needs.securesdlc-visibility-check.outputs.visibility != 'public' || (needs.securesdlc-visibility-check.outputs.visibility == 'public' && github.event_name != 'pull_request') }}
         uses: github/codeql-action/upload-sarif@v3
         with:
