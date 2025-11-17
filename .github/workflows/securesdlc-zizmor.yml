@@ -75,8 +75,10 @@ jobs:
         run: |
           if find .github -type f \( -name "*.yml" -o -name "*.yaml" \) | grep -q .; then
             echo "has_workflows=true"  >> "$GITHUB_OUTPUT"
+            echo "Workflow files detected. Ready to run Zizmor."
           else
             echo "has_workflows=false" >> "$GITHUB_OUTPUT"
+            echo "Workflow files NOT detected. Zizmor will fail."
           fi
 
       - name: Run Zizmor if workflow files exist
