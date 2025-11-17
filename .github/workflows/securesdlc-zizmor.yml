@@ -53,7 +53,7 @@ jobs:
   zizmor:
     name: SecureSDLC Zizmor
     continue-on-error: true
-    if: ${{ github.actor != 'dependabot[bot]' }}
+    if: ${{ github.actor != 'dependabot[bot]' && hashFiles('.github/workflows/**/*.y?(a)ml') != '' }}
     needs: securesdlc-visibility-check    
     runs-on: ubuntu-latest
     permissions:
@@ -70,14 +70,7 @@ jobs:
         uses: astral-sh/setup-uv@c7f87aa956e4c323abf06d5dec078e358f6b4d04 # v6.0.0
 
       - name: Run Zizmor if workflow files exist
-        run: |
-          if find .github/workflows -type f \( -name "*.yml" -o -name "*.yaml" \) | grep -q .; then
-            uvx zizmor --format=sarif . > zizmor.sarif 
-          else
-            echo "No YAML workflow files found, exiting Zizmor."
-            exit 0
-          fi        
-
+        run: uvx zizmor --format=sarif . > zizmor.sarif 
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
       - name: Convert SARIF levels to severities
