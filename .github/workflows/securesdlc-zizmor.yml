@@ -133,7 +133,7 @@ jobs:
 
       - name: Publish findings to the dashboard and annotate PRs # Allowed for non-public repos and public repos except for PRs- to supress findings in public PR annotations.
         if: ${{ needs.securesdlc-visibility-check.outputs.visibility != 'public' || (needs.securesdlc-visibility-check.outputs.visibility == 'public' && github.event_name != 'pull_request') }}
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: zizmor-final.sarif 
           category: zizmor
