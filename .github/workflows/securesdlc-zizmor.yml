@@ -18,7 +18,6 @@ jobs:
     name: SecureSDLC Zizmor
     continue-on-error: true # For private repos withou GHAS publishing fails. Also we do not want to block devs' pipelines in general.
     if: ${{ github.actor != 'dependabot[bot]' }}
-    needs: securesdlc-visibility-check    
     runs-on: ubuntu-latest
     permissions:
       contents: read # for actions/checkout to fetch code
@@ -88,7 +87,6 @@ jobs:
           jq '(.runs[].tool.driver.name) = "Zizmor (SecureSDLC)"' zizmor-severities-updated.sarif > zizmor-final.sarif
 
       - name: Upload Zizmor artifact
-        if: ${{ needs.securesdlc-visibility-check.outputs.visibility != 'public' }}
         uses: actions/upload-artifact@v4
         with:
           name: Zizmor scan results
