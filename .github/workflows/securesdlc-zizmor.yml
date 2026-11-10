@@ -73,7 +73,7 @@ jobs:
 
           # Extract ruleId → max severity score map
           . as $root
-          | $root.runs[0].results
+          | ($root.runs[0].results // [])
             | map({ruleId, score: level_score(.level)})
             | group_by(.ruleId)
             | map({ (.[0].ruleId): (map(.score) | max) })
@@ -82,12 +82,12 @@ jobs:
 
           # Apply it to the rules section
           | $root
-          | .runs[0].tool.driver.rules |=
+          | .runs[0].tool.driver.rules |= ((. // []) |
               map(
                 if .id and ($severity_map[.id]? != null) then
                   .properties["security-severity"] = score_to_severity($severity_map[.id])
                 else . end
-              )
+              ))
           ' zizmor.sarif > zizmor-severities-updated.sarif
 
       - name: Convert SARIF tool name
