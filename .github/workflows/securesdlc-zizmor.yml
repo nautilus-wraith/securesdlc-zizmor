@@ -42,7 +42,7 @@ jobs:
           fi
 
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@c7f87aa956e4c323abf06d5dec078e358f6b4d04 # v6.0.0
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
 
       - name: Exclude SecureSDLC workflows from Zizmor
         run: |
@@ -95,7 +95,7 @@ jobs:
           jq '(.runs[].tool.driver.name) = "Zizmor (SecureSDLC)"' zizmor-severities-updated.sarif > zizmor-final.sarif
 
       - name: Upload Zizmor artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: Zizmor scan results
           path: zizmor-final.sarif 
